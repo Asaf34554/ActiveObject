@@ -6,7 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 
-typedef void(*ffunc)(void *);
+typedef void(*ffunc)(void *&);
 typedef struct _Task
 {
     
@@ -22,6 +22,7 @@ typedef struct _Task
     void* dequeue() {
         std::unique_lock<std::mutex> lock(mtx);
         cv.wait(lock, [this] { return !numQueue.empty(); });
+        if(numQueue.front() == nullptr) return nullptr;
         void* item = numQueue.front();
         numQueue.pop();
         return item;
@@ -38,13 +39,13 @@ class ActiveObject{
 };
 void* CreateActiveObject(ffunc func);
 void* getQueue(void*);
-void stop();
+void stop(void*);
 unsigned int GetNum();
 void task_handler(ActiveObject*,ffunc);
 int isPrime(unsigned int); 
 
 
-void generatenums(void*); //ao1
-void isPrime1(void*); //ao2
-void isPrime2(void*); //ao3
-void lastFunc(void*); //ao4
+void generatenums(void*&); //ao1
+void isPrime1(void*&); //ao2
+void isPrime2(void*&); //ao3
+void lastFunc(void*&); //ao4
